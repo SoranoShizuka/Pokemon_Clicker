@@ -5,7 +5,8 @@
     <img src="../../img/clicker.png" alt="">
   </div>
 </template>
-<script>
+<script lang="ts">
+
 </script>
 <style scoped>
 .images {
