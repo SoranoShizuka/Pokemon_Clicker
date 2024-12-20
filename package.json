@@ -1,0 +1,21 @@
+{
+  "name": "Pokemon_Clicker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "tsc": "tsc"
+  },
+  "dependencies": {
+    "axios": "^1.7.9",
+    "js-cookie": "^3.0.5",
+    "vite": "^6.0.3",
+    "vue-router": "^4.5.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9",
+    "typescript": "^5.7.2"
+  },
+  "private": true
+}
