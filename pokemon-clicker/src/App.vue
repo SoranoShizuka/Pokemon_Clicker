@@ -1,15 +1,14 @@
 <template>
   <div class="pokemon-container">
     <Images/>
-    <LoginRegisterPage/>
+    <router-view/>
   </div>
 </template>
 <script lang="ts">
 import {defineComponent} from "vue";
-import LoginRegisterPage from "@/components/pages/LoginRegisterPage.vue";
 import Images from '@/components/shared/Images.vue'
 export default defineComponent({
-  components: {Images, LoginRegisterPage}
+  components: {Images}
 })
 </script>
 <style scoped>

@@ -11,15 +11,4 @@ const buttonInfo = ref({
 });
 </script>
 <style scoped>
-button {
-  background-color: #365FAC;
-  color: white;
-  border: none;
-  padding: 10px;
-  border-radius: 4px;
-  cursor: pointer;
-}
-button:hover {
-  background-color: #224f9e;
-}
 </style>

@@ -3,33 +3,25 @@
     <div class="tabs-border-bottom">
     <!-- Вкладки -->
     <div class="tabs">
-      <span
-          :class="['tab', { active: currentTab === 'signup' }]"
-          @click="setTab('signup')">
+      <router-link
+          to="/auth/sign-up"
+          :class="['tab', { active: currentTab === 'sign-up' }]"
+          @click="setTab('sign-up')">
         Sign up
-      </span>
-      <span
-          :class="['tab', { active: currentTab === 'signin' }]"
-          @click="setTab('signin')">
+      </router-link>
+      <router-link
+          to="/auth/sign-in"
+          :class="['tab', { active: currentTab === 'sign-in' }]"
+          @click="setTab('sign-in')">
         Sign in
-      </span>
+      </router-link>
     </div>
       <BlueIndicator :style="indicatorStyle"/>
     </div>
     <!-- Содержимое вкладок -->
     <div class="tab-content">
-      <div class="currentTab" v-if="currentTab === 'signup'">
-        <router-link
-            v-model="signUpData"
-            @submit.prevent="onSubmitSignUp"
-            to="/login">
-        </router-link>
-      </div>
-      <div class="currentTab" v-if="currentTab === 'signin'">
-        <router-link
-            @submit.prevent="onSubmitSignIn"
-            to="/register">
-        </router-link>
+      <div class="currentTab">
+        <router-view/>
       </div>
     </div>
   </div>
@@ -50,7 +42,7 @@ export default defineComponent({
       'PasswordConfirm',
     ]);
     // Текущая активная вкладка
-    const currentTab = ref<"signup" | "signin">("signup");
+    const currentTab = ref<"sign-up" | "sign-in">("sign-up");
 
     // Данные форм
     const signUpData = ref({ login: "", password: "", password_confirmation: "" });
@@ -59,12 +51,12 @@ export default defineComponent({
     // Стиль индикатора для подчеркивания активной вкладки
     const indicatorStyle = computed(() => {
       return {
-        transform: currentTab.value === "signup" ? "translateX(102px)" : "translateX(184px)",
+        transform: currentTab.value === "sign-up" ? "translateX(102px)" : "translateX(184px)",
       };
     });
 
     // Обработчики переключения вкладок
-    const setTab = (tab: "signup" | "signin") => {
+    const setTab = (tab: "sign-up" | "sign-in") => {
       currentTab.value = tab;
     };
 
@@ -143,5 +135,14 @@ input {
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 2px;
+}
+router-link,
+router-link-active {
+  text-decoration: none; /* Убирает подчеркивание */
+  color: inherit;        /* Наследует цвет текста */
+}
+
+router-link:hover {
+  text-decoration: none; /* Убирает подчеркивание при наведении */
 }
 </style>
