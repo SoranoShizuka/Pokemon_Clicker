@@ -1,14 +1,13 @@
 <template>
   <button type="submit">
-    <slot :info="buttonInfo"></slot>
+    <slot :buttonInfo="buttonInfo"></slot>
   </button>
 </template>
 <script lang="ts">
-import {ref} from "vue";
+import { ref } from "vue";
 const buttonInfo = ref({
-  signUp: 'Sign Up',
-  signIn: 'Sign In',
+  signUp: "Sign Up",
+  signIn: "Sign In",
 });
 </script>
-<style scoped>
-</style>
+<style scoped></style>

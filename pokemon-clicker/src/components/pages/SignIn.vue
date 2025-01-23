@@ -1,33 +1,33 @@
 <template>
-    <!-- Здесь будет форма входа -->
-      <form>
-          <span class="gap">
-      <span class="required">*</span>
+  <!-- Здесь будет форма входа -->
+  <form>
+    <Label title="login" :required="true">
       <span class="text">Login</span>
-      </span>
-        <Input type="login"
-               placeholder="input login"
-               v-model="signInData.login">
-        </Input>
-        <span class="gap">
-      <span class="required">*</span>
+      <input
+        type="login"
+        placeholder="input login"
+        v-model="signInData.login"
+      />
+    </Label>
+    <Label title="password" :required="true">
       <span class="text">Password</span>
-      </span>
-        <Input type="password"
-               placeholder="input password"
-               v-model="signInData.password">
-        </Input>
-        <Button>
-          <span>Sign In</span>
-        </Button>
-      </form>
+      <input
+        type="password"
+        placeholder="input password"
+        v-model="signInData.password"
+      />
+    </Label>
+    <Button>
+      <span>Sign In</span>
+    </Button>
+  </form>
 </template>
 <script>
-import {defineComponent, ref} from "vue";
+import { defineComponent, ref } from "vue";
 import Button from "../shared/Button.vue";
-import Input from "../shared/Input.vue";
+import Label from "../shared/Label.vue";
 export default defineComponent({
-  components: {Input, Button},
+  components: { Label, Button },
   name: "SignIn",
   setup() {
     const signInData = ref({ login: "", password: "" });
@@ -35,7 +35,7 @@ export default defineComponent({
       signInData,
     };
   },
-})
+});
 </script>
 <style scoped>
 form {
@@ -47,6 +47,7 @@ input {
   border: 1px solid #ccc;
   border-radius: 2px;
   gap: 24px;
+  width: 95%;
 }
 .gap {
   display: flex;
@@ -56,7 +57,7 @@ input {
   color: red;
 }
 button {
-  background-color: #365FAC;
+  background-color: #365fac;
   color: white;
   border: none;
   padding: 10px;
