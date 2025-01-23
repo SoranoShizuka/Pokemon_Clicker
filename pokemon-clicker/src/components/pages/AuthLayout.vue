@@ -1,27 +1,33 @@
 <template>
   <div class="auth-container">
     <div class="tabs-border-bottom">
-    <!-- Вкладки -->
-    <div class="tabs">
-      <router-link
+      <!-- Вкладки -->
+      <div class="tabs">
+        <router-link
           to="/auth/sign-up"
           :class="['tab', { active: currentTab === 'sign-up' }]"
-          @click="setTab('sign-up')">
-        Sign up
-      </router-link>
-      <router-link
+          @click="setTab('sign-up')"
+        >
+          Sign up
+        </router-link>
+        <router-link
           to="/auth/sign-in"
           :class="['tab', { active: currentTab === 'sign-in' }]"
-          @click="setTab('sign-in')">
-        Sign in
-      </router-link>
-    </div>
-      <BlueIndicator :style="indicatorStyle"/>
+          @click="setTab('sign-in')"
+        >
+          Sign in
+        </router-link>
+      </div>
+      <Tabs
+        :style="indicatorStyle"
+        items="[{ name: 'Sign In', link: '/auth/sign-in'}]' },
+            { name: 'Sign Up', link: '/auth/sign-up' }]"
+      />
     </div>
     <!-- Содержимое вкладок -->
     <div class="tab-content">
       <div class="currentTab">
-        <router-view/>
+        <router-view />
       </div>
     </div>
   </div>
@@ -31,27 +37,30 @@
 import { defineComponent, ref, computed } from "vue";
 import SignUp from "../pages/SignUp.vue";
 import SignIn from "../pages/SignIn.vue";
-import BlueIndicator from "../shared/BlueIndicator.vue";
+import Tabs from "@/components/shared/Tabs.vue";
 export default defineComponent({
-  components: {BlueIndicator, SignUp, SignIn},
+  components: { Tabs, SignUp, SignIn },
   name: "AuthTabs",
   setup() {
-    const slots = ref([
-      'Login',
-      'Password',
-      'PasswordConfirm',
-    ]);
+    const slots = ref(["Login", "Password", "PasswordConfirm"]);
     // Текущая активная вкладка
     const currentTab = ref<"sign-up" | "sign-in">("sign-up");
 
     // Данные форм
-    const signUpData = ref({ login: "", password: "", password_confirmation: "" });
+    const signUpData = ref({
+      login: "",
+      password: "",
+      password_confirmation: "",
+    });
     const signInData = ref({ login: "", password: "" });
 
     // Стиль индикатора для подчеркивания активной вкладки
     const indicatorStyle = computed(() => {
       return {
-        transform: currentTab.value === "sign-up" ? "translateX(102px)" : "translateX(184px)",
+        transform:
+          currentTab.value === "sign-up"
+            ? "translateX(102px)"
+            : "translateX(184px)",
       };
     });
 
@@ -94,7 +103,7 @@ export default defineComponent({
   padding: 24px;
   margin: 20px 0;
   box-shadow: 0 0 16px 0 rgba(58, 58, 58, 0.1);
-  background: #FFFFFF;
+  background: #ffffff;
   font-family: Roboto, sans-serif;
   font-weight: 400;
   font-size: 14px;
@@ -109,7 +118,7 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   gap: 10px;
-  border-bottom: 1px solid #0000000F;
+  border-bottom: 1px solid #0000000f;
 }
 .tab {
   cursor: pointer;
@@ -117,7 +126,7 @@ export default defineComponent({
   color: #000000;
 }
 .tab.active {
-  color: #365FAC;
+  color: #365fac;
 }
 .tab-content {
   width: 352px;
@@ -139,7 +148,7 @@ input {
 router-link,
 router-link-active {
   text-decoration: none; /* Убирает подчеркивание */
-  color: inherit;        /* Наследует цвет текста */
+  color: inherit; /* Наследует цвет текста */
 }
 
 router-link:hover {
