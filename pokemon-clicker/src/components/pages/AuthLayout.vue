@@ -1,33 +1,45 @@
 <template>
-  <div class="auth-container">
-    <div class="tabs-border-bottom">
-      <!-- Вкладки -->
-      <div class="tabs">
-        <router-link
-          to="/auth/sign-up"
-          :class="['tab', { active: currentTab === 'sign-up' }]"
-          @click="setTab('sign-up')"
-        >
-          Sign up
-        </router-link>
-        <router-link
-          to="/auth/sign-in"
-          :class="['tab', { active: currentTab === 'sign-in' }]"
-          @click="setTab('sign-in')"
-        >
-          Sign in
-        </router-link>
-      </div>
-      <Tabs
-        :style="indicatorStyle"
-        items="[{ name: 'Sign In', link: '/auth/sign-in'}]' },
-            { name: 'Sign Up', link: '/auth/sign-up' }]"
+  <div class="pokemon-container">
+    <div class="images">
+      <img
+        src="C:\Users\vklus\Рабочий стол\Pokemon_Clicker\pokemon-clicker\src\img\pokemon.png"
+      />
+      <div class="border"></div>
+      <img
+        src="C:\Users\vklus\Рабочий стол\Pokemon_Clicker\pokemon-clicker\src\img\clicker.png"
       />
     </div>
-    <!-- Содержимое вкладок -->
-    <div class="tab-content">
-      <div class="currentTab">
-        <router-view />
+    <div class="auth-container">
+      <div class="tabs-border-bottom">
+        <!-- Вкладки -->
+        <div class="tabs">
+          <router-link
+            to="/auth/sign-up"
+            :class="{ active: currentTab === 'sign-up' }"
+            @click="setTab('sign-up')"
+          >
+            Sign up
+          </router-link>
+          <router-link
+            to="/auth/sign-in"
+            :class="{ active: currentTab === 'sign-in' }"
+            @click="setTab('sign-in')"
+          >
+            Sign in
+          </router-link>
+        </div>
+        <Tabs
+          class="indicator"
+          :style="indicatorStyle"
+          items="[{ name: 'Sign In', link: '/auth/sign-in'}',
+            { name: 'Sign Up', link: '/auth/sign-up' }]"
+        />
+      </div>
+      <!-- Содержимое вкладок -->
+      <div class="tab-content">
+        <div class="currentTab">
+          <router-view />
+        </div>
       </div>
     </div>
   </div>
@@ -38,13 +50,20 @@ import { defineComponent, ref, computed } from "vue";
 import SignUp from "../pages/SignUp.vue";
 import SignIn from "../pages/SignIn.vue";
 import Tabs from "@/components/shared/Tabs.vue";
+import { useRouter, useRoute } from "vue-router";
 export default defineComponent({
   components: { Tabs, SignUp, SignIn },
   name: "AuthTabs",
   setup() {
     const slots = ref(["Login", "Password", "PasswordConfirm"]);
     // Текущая активная вкладка
-    const currentTab = ref<"sign-up" | "sign-in">("sign-up");
+    const router = useRouter();
+    const route = useRoute();
+    const tabs = ["sign-up", "sign-in"];
+    const currentTab = computed(() => {
+      const path = route.path.split("/").pop();
+      return path || "sign-in";
+    });
 
     // Данные форм
     const signUpData = ref({
@@ -59,14 +78,14 @@ export default defineComponent({
       return {
         transform:
           currentTab.value === "sign-up"
-            ? "translateX(102px)"
-            : "translateX(184px)",
+            ? "translateX(100px)"
+            : "translateX(177px)",
       };
     });
 
     // Обработчики переключения вкладок
     const setTab = (tab: "sign-up" | "sign-in") => {
-      currentTab.value = tab;
+      router.push(`/auth/${tab}`);
     };
 
     // Обработка отправки форм
@@ -94,6 +113,24 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.pokemon-container {
+  width: 440px;
+  display: flex;
+  justify-content: center;
+  margin: 195px 520px;
+  gap: 20px;
+  flex-direction: column;
+}
+.images {
+  width: 328px;
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  margin: 0 35px;
+}
+.border {
+  border: 2px solid #efefef;
+}
 .auth-container {
   width: 352px;
   display: flex;
@@ -113,6 +150,10 @@ export default defineComponent({
   margin: 0 100px;
   position: relative;
   gap: 32px;
+}
+a {
+  color: #365fac;
+  text-decoration: none;
 }
 .tabs-border-bottom {
   display: flex;
@@ -148,7 +189,7 @@ input {
 router-link,
 router-link-active {
   text-decoration: none; /* Убирает подчеркивание */
-  color: inherit; /* Наследует цвет текста */
+  color: #365fac; /* Наследует цвет текста */
 }
 
 router-link:hover {
