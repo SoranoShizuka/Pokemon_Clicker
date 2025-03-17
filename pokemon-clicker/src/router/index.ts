@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import SignIn from "@/components/pages/SignIn.vue";
 import SignUp from "@/components/pages/SignUp.vue";
 import AuthLayout from "@/components/pages/AuthLayout.vue";
-import pokemonGame from "@/components/pages/pokemonGame.vue";
+import pokemonGame from "@/components/pages/PokemonGame.vue";
 
 const routes = [
   {

@@ -62,7 +62,7 @@ export default {
     onMounted(() => {
       pokemonStore.loadPokemons();
       if (pokemonStore.pokemons.length > 0) {
-        // Берем первого покемона и добавляем 6 копий этого покемона
+        // беру первого покемона и добавляем 6 копий этого покемона
         pokemonStore.addSixPokemons(pokemonStore.pokemons[0]); // Добавляем 6 копий первого покемона
       }
       balanceStore.startEarning();
@@ -84,8 +84,6 @@ export default {
 .my-pokemon_container {
   display: flex;
   flex-direction: column;
-  align-items: start;
-  justify-content: center;
   width: 50%;
   box-shadow: 0px 0px 16px 0px #3a3a3a1a;
   border-radius: 16px;
@@ -97,10 +95,10 @@ export default {
   gap: 430px;
 }
 .title {
+  margin: 0;
   font-family: "Inter", sans-serif;
   font-size: 24px;
   font-weight: 700;
-  line-height: 29px;
   color: #ffcc01;
   text-shadow:
     2px 2px 0 #365fac,
@@ -113,12 +111,9 @@ export default {
     0px -2px 0 #365fac;
 }
 .btn {
-  width: 28px;
-  height: 28px;
   border: none;
   background: transparent;
   border-radius: 2px;
-  margin: 16px;
   position: relative;
   right: 0;
   top: 0;
