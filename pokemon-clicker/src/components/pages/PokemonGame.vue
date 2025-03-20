@@ -9,7 +9,7 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
 import HeaderPokemonGame from "../shared/HeaderPokemonGame.vue";
 import MyPokemonGame from "../shared/MyPokemonGame.vue";
 import InventoryPokemonGame from "../shared/InventoryPokemonGame.vue";

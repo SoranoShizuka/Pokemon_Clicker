@@ -17,11 +17,7 @@
       </div>
     </div>
     <div class="shop_items-container">
-      <div
-        class="shop_item-card"
-        v-for="item in filteredItems"
-        :key="item.name"
-      >
+      <div class="shop_item-card" v-for="item in filteredItems" :key="item.id">
         <div class="shop_item-card_content">
           <img class="shop_item-image" :src="item.image" />
           <div class="shop_item-text">
@@ -38,6 +34,17 @@
 </template>
 <script lang="ts">
 import { defineComponent, ref, computed, onMounted } from "vue";
+import { useInventoryStore } from "@/stores/inventory.ts";
+interface ShopItem {
+  id: string;
+  title: string;
+  description: string;
+  price: number;
+  image: string;
+  type: string;
+  width: number;
+  height: number;
+}
 export default defineComponent({
   name: "Shop",
   setup() {
@@ -51,14 +58,16 @@ export default defineComponent({
     // состояние загрузки предметов
     const loading = ref(true);
     // содержимое предметов
-    const items = ref([]);
+    const items = ref<ShopItem[]>([]);
     // фильтры
     const filters = ["Ягоды", "Покеболлы"];
     // выбранные фильтры
     const selectedFilters = ref(["Ягоды", "Покеболлы"]);
 
     // функция загрузки айтемов с апи
-    const fetchItemData = async (itemName: string) => {
+    const fetchItemData = async (
+      itemName: string,
+    ): Promise<ShopItem | null> => {
       try {
         const response = await fetch(`${API_SHOP_ITEM}${itemName}`);
         if (!response.ok) throw new Error(`Ошибка загрузки ${itemName}`);
@@ -68,7 +77,7 @@ export default defineComponent({
           title: ItemTitle(data.name),
           description: getDescription(data),
           price: calculatePrice(data.name),
-          image: data.sprites?.default,
+          image: data.sprites?.default || "",
           type: pokeballsList.value.includes(itemName) ? "Покеболлы" : "Ягоды",
           width: pokeballsList.value.includes(itemName) ? 1 : 2,
           height: pokeballsList.value.includes(itemName) ? 1 : 2,
@@ -133,8 +142,10 @@ export default defineComponent({
     // функция покупки айтема
     const buyItem = (item: any) => {
       // добавляю предмет в инвентарь через хранилище pinia
+      console.log(item);
       inventoryStore.buyItem(item);
     };
+    console.log(inventoryStore.inventory);
 
     onMounted(() => {
       loadItems();
