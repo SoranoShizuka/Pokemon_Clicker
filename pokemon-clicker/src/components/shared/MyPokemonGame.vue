@@ -18,10 +18,12 @@
           <p class="my-pokemon_name">
             {{ pokemon.name }}
           </p>
-          <img
-            class="my-pokemon_settings-image"
-            src="C:\Users\vklus\Рабочий стол\Pokemon_Clicker\pokemon-clicker\src\img\setting.png"
-          />
+          <button class="btn-settings" @click="isOpenSettings(pokemon)">
+            <img
+              class="my-pokemon_settings-image"
+              src="C:\Users\vklus\Рабочий стол\Pokemon_Clicker\pokemon-clicker\src\img\setting.png"
+            />
+          </button>
         </div>
         <img
           class="my-pokemon_image"
@@ -39,14 +41,23 @@
         </div>
       </div>
     </div>
+    <PokemonSettings
+      v-if="isModalOpen"
+      :pokemon="selectedPokemon"
+      @close="isModalOpen = false"
+      :email="email"
+      @feed="feedPokemon"
+    />
   </div>
 </template>
 <script lang="ts">
-import { onMounted, onUnmounted, ref, computed } from "vue";
+import { onMounted, ref, computed } from "vue";
 import { usePokemonStore } from "@/stores/pokemonStore.ts";
 import { useBalanceStore } from "@/stores/balanceStore.ts";
+import PokemonSettings from "@/components/shared/PokemonSettings.vue";
 
 interface Pokemon {
+  id: string;
   name: string;
   image: string;
   weight: number;
@@ -54,28 +65,84 @@ interface Pokemon {
 }
 
 export default {
+  components: { PokemonSettings },
+  props: {
+    email: {
+      type: String,
+      required: true,
+    },
+  },
   setup() {
     const isOpen = ref(false);
     const pokemonStore = usePokemonStore();
     const balanceStore = useBalanceStore();
+    const selectedPokemon = ref(null);
+    const isModalOpen = ref(false);
 
+    const email = ref("");
+    const storageKey = `pokemon_${email}`;
     onMounted(() => {
-      pokemonStore.loadPokemons();
-      if (pokemonStore.pokemons.length > 0) {
-        // беру первого покемона и добавляем 6 копий этого покемона
-        pokemonStore.addSixPokemons(pokemonStore.pokemons[0]); // Добавляем 6 копий первого покемона
+      email.value = localStorage.getItem(storageKey) || "default@email.com";
+    });
+
+    const isOpenSettings = (pokemon: any) => {
+      console.log("выбранный покемон:", pokemon);
+      if (!pokemon.id) {
+        console.error("у этого покемона нет id!", pokemon);
       }
+      selectedPokemon.value = { ...pokemon };
+      isModalOpen.value = true;
+    };
+
+    onMounted(async () => {
+      await pokemonStore.loadPokemons(); // дожидаюсь загрузки покемонов
+
+      if (pokemonStore.pokemons.length > 0) {
+        console.log(
+          "покемоны загружены, добавляем 6 копий",
+          pokemonStore.pokemons[0],
+        );
+        pokemonStore.addSixPokemons(pokemonStore.pokemons[0]);
+      } else {
+        console.error("покемоны не загружены!");
+      }
+
       balanceStore.startEarning();
     });
 
-    onUnmounted(() => {
-      balanceStore.stopEarning();
-    });
+    const openModal = (pokemon: Pokemon) => {
+      selectedPokemon.value = { ...pokemon }; // копирую объект покемона с id
+      isModalOpen.value = true;
+    };
+
+    // Метод для увеличения веса покемона
+    const feedPokemon = (pokemon: any, weightIncrease: number) => {
+      console.log("начинаю кормление:", pokemon.id, "на", weightIncrease, "кг");
+
+      const updatedPokemon = pokemonStore.pokemons.find(
+        (p) => p.id === pokemon.id,
+      );
+      if (!updatedPokemon) {
+        console.error("покемон не найден в store!", pokemon);
+        return;
+      }
+
+      updatedPokemon.weight += weightIncrease; // увеличивается вес покемона
+      pokemonStore.updatePokemons(updatedPokemon);
+
+      console.log("✅ Новый вес:", updatedPokemon.weight);
+    };
 
     return {
       isOpen,
       pokemons: computed(() => pokemonStore.pokemons),
       totalBalance: balanceStore.totalBalance,
+      selectedPokemon,
+      isOpenSettings,
+      isModalOpen,
+      storageKey,
+      feedPokemon,
+      openModal,
     };
   },
 };
@@ -156,6 +223,12 @@ export default {
   gap: 60px;
   justify-content: center;
   align-items: center;
+}
+.btn-settings {
+  display: flex;
+  border: none;
+  background: none;
+  cursor: pointer;
 }
 .my-pokemon_name {
   margin: 0;
