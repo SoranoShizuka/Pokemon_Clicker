@@ -3,7 +3,7 @@
     <div class="feed-item" v-for="(berry, index) in berries" :key="index">
       <img class="feed-img" :src="berry.image" width="59px" height="59px" />
       <div class="feed-text">
-        <h2>Ягода 1 уровня</h2>
+        <h2>Ягода {{ berry.name }} уровня</h2>
         <p>Накорми ей покемона для увеличения веса на {{ berry.weight }} кг</p>
       </div>
       <button class="settings-btn" @click="feedPokemon(berry.weight)">
@@ -15,8 +15,10 @@
 
 <script lang="ts">
 import { defineComponent, ref, onMounted } from "vue";
+import type { Berry } from "@/stores/typesStore.ts";
 
 export default defineComponent({
+  name: "PokemonFeed",
   props: {
     pokemonId: {
       type: Number,
@@ -25,7 +27,7 @@ export default defineComponent({
   },
   emits: ["feed"],
   setup(props, { emit }) {
-    const berries = ref<any[]>([]);
+    const berries = ref<Berry[]>([]);
     const API_GET_BERRY = "https://pokeapi.co/api/v2/berry/";
 
     // Функция для загрузки данных ягод с использованием fetch
@@ -41,8 +43,9 @@ export default defineComponent({
         if (Array.isArray(data.results)) {
           // обрабатываю каждый элемент массива
           berries.value = data.results.slice(0, 3).map((berry: any) => ({
+            name: berry.name,
             weight: 1,
-            image: "src/img/berry.png",
+            image: "/berry.png",
           }));
         } else {
           console.error("данные не содержат ожидаемого массива results");

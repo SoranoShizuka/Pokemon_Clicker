@@ -7,9 +7,7 @@
           Управление покемоном {{ pokemon.name }}
         </p>
         <button @click="closeModal" class="settings_close-modal">
-          <img
-            src="C:\Users\vklus\Рабочий стол\Pokemon_Clicker\pokemon-clicker\src\img\close.png"
-          />
+          <img src="/close.png" />
         </button>
       </div>
       <!-- Вкладки -->
@@ -59,10 +57,11 @@
 import { defineComponent, computed, ref } from "vue";
 import PokemonFeed from "@/components/shared/PokemonFeed.vue";
 import PokemonStats from "@/components/shared/PokemonStats.vue";
-import Tabs from "@/components/shared/Tabs.vue";
+import Tabs from "@/components/shared/IndicatorTabs.vue";
 import { usePokemonStore } from "@/stores/pokemonStore.ts";
 
 export default defineComponent({
+  name: "PokemonSettings",
   components: { PokemonStats, PokemonFeed, Tabs },
   props: {
     pokemon: {

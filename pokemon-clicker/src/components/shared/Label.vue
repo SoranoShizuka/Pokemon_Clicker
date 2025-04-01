@@ -1,11 +1,23 @@
 <template>
   <label>
-    <span :class="{ required: props.required }"></span>
+    <span :class="{ required: required }"></span>
     <slot />
   </label>
 </template>
-<script setup lang="ts">
-const props = defineProps(["required"]);
+<script lang="ts">
+import { defineComponent } from "vue";
+export default defineComponent({
+  name: "Label",
+  setup() {
+    /* нужно, чтобы иметь
+    доступ к required через props.required
+    */
+    const props = defineProps<{
+      required: boolean;
+    }>();
+    return { ...props };
+  },
+});
 </script>
 <style scoped>
 input {

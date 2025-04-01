@@ -19,10 +19,7 @@
             {{ pokemon.name }}
           </p>
           <button class="btn-settings" @click="isOpenSettings(pokemon)">
-            <img
-              class="my-pokemon_settings-image"
-              src="C:\Users\vklus\Рабочий стол\Pokemon_Clicker\pokemon-clicker\src\img\setting.png"
-            />
+            <img class="my-pokemon_settings-image" src="/setting.png" />
           </button>
         </div>
         <img
@@ -51,20 +48,14 @@
   </div>
 </template>
 <script lang="ts">
-import { onMounted, ref, computed } from "vue";
+import { defineComponent, onMounted, ref, computed } from "vue";
 import { usePokemonStore } from "@/stores/pokemonStore.ts";
 import { useBalanceStore } from "@/stores/balanceStore.ts";
 import PokemonSettings from "@/components/shared/PokemonSettings.vue";
+import type { Pokemon } from "@/stores/typesStore.ts";
 
-interface Pokemon {
-  id: string;
-  name: string;
-  image: string;
-  weight: number;
-  moneyPerSec: number;
-}
-
-export default {
+export default defineComponent({
+  name: "MyPokemonGame",
   components: { PokemonSettings },
   props: {
     email: {
@@ -82,7 +73,7 @@ export default {
     const email = ref("");
     const storageKey = `pokemon_${email}`;
     onMounted(() => {
-      email.value = localStorage.getItem(storageKey) || "default@email.com";
+      email.value = localStorage.getItem(storageKey) || "default@gmail.com";
     });
 
     const isOpenSettings = (pokemon: any) => {
@@ -130,7 +121,7 @@ export default {
       updatedPokemon.weight += weightIncrease; // увеличивается вес покемона
       pokemonStore.updatePokemons(updatedPokemon);
 
-      console.log("✅ Новый вес:", updatedPokemon.weight);
+      console.log("Новый вес:", updatedPokemon.weight);
     };
 
     return {
@@ -145,7 +136,7 @@ export default {
       openModal,
     };
   },
-};
+});
 </script>
 <style scoped>
 .my-pokemon_container {

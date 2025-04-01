@@ -3,9 +3,6 @@ import SignIn from "@/components/pages/SignIn.vue";
 import SignUp from "@/components/pages/SignUp.vue";
 import AuthLayout from "@/components/pages/AuthLayout.vue";
 import pokemonGame from "@/components/pages/PokemonGame.vue";
-import PokemonSettings from "@/components/shared/PokemonSettings.vue";
-import PokemonFeed from "@/components/shared/PokemonFeed.vue";
-import PokemonStats from "@/components/shared/PokemonStats.vue";
 
 const routes = [
   {

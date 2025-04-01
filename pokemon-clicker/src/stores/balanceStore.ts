@@ -5,24 +5,30 @@ export const useBalanceStore = defineStore("balance", {
   state: () => ({
     totalBalance: 0,
     earningInterval: null as ReturnType<typeof setInterval> | null, // таймер
-    isEarning: false, // флаг работы таймера
   }),
   actions: {
     addBalance(amount: number) {
       this.totalBalance += amount;
       console.log(`общий баланс: ${this.totalBalance}`);
     },
+
+    spendBalance(amount: number) {
+      if (this.totalBalance >= amount) {
+        this.totalBalance -= amount;
+        console.log("new balance", this.totalBalance);
+      } else {
+        console.error("no money");
+      }
+    },
+
     // запуск начисления денег
     startEarning() {
       if (this.earningInterval) return; // Если уже запущен — выходим
 
-      console.log("💰 Начисление денег запущено...");
-      this.isEarning = true;
+      console.log("Начисление денег запущено...");
 
       const pokemonStore = usePokemonStore();
       this.earningInterval = setInterval(() => {
-        if (!this.isEarning) return; // если флаг false — выходим
-
         const totalMoneyPerSec = pokemonStore.pokemons.reduce(
           (sum, pokemon) => sum + (pokemon.moneyPerSec || 0),
           0,
@@ -37,7 +43,6 @@ export const useBalanceStore = defineStore("balance", {
         console.log("Начисление денег остановлено");
         clearInterval(this.earningInterval);
         this.earningInterval = null;
-        this.isEarning = false; // ставлю флаг в false
       }
     },
   },

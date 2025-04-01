@@ -1,19 +1,12 @@
 <template>
   <div class="header">
     <div class="images">
-      <img
-        src="C:\Users\vklus\Рабочий стол\Pokemon_Clicker\pokemon-clicker\src\img\pokemon.png"
-      />
+      <img src="/pokemon.png" />
       <div class="border"></div>
-      <img
-        src="C:\Users\vklus\Рабочий стол\Pokemon_Clicker\pokemon-clicker\src\img\clicker.png"
-      />
+      <img src="/clicker.png" />
     </div>
     <div class="header-money">
-      <img
-        class="icon-pokemon"
-        src="C:\Users\vklus\Рабочий стол\Pokemon_Clicker\pokemon-clicker\src\img\icon-pokemon.png"
-      />
+      <img class="icon-pokemon" src="/icon-pokemon.png" />
       <span class="text-container">
         <span class="text" data-content="100 000 000">{{ totalBalance }}</span>
         <button class="text" data-content="+" @click="startEarning">+</button>
@@ -23,20 +16,19 @@
   </div>
 </template>
 <script lang="ts">
+import { defineComponent, computed } from "vue";
 import { useBalanceStore } from "@/stores/balanceStore.ts";
-import { computed } from "vue";
-
-export default {
+export default defineComponent({
+  name: "HeaderPokemonGame",
   setup() {
     const balanceStore = useBalanceStore();
-
     return {
       totalBalance: computed(() => balanceStore.totalBalance),
       startEarning: () => balanceStore.startEarning(),
       stopEarning: () => balanceStore.stopEarning(),
     };
   },
-};
+});
 </script>
 
 <style scoped>

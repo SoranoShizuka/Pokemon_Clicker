@@ -1,14 +1,6 @@
 import { defineStore } from "pinia";
 import { useBalanceStore } from "@/stores/balanceStore";
-
-// Интерфейс для покемона
-interface Pokemon {
-  id: string;
-  name: string;
-  image: string;
-  weight: number;
-  moneyPerSec: number;
-}
+import type { Pokemon } from "@/stores/typesStore.ts";
 
 export const usePokemonStore = defineStore("pokemon", {
   state: () => ({
@@ -68,24 +60,10 @@ export const usePokemonStore = defineStore("pokemon", {
     },
 
     deletePokemon(pokemonId: string) {
-      // удаляю покемона из массива покемонов в хранилище
+      // удаляю покемона из массива
       this.pokemons = this.pokemons.filter(
         (pokemon) => pokemon.id !== pokemonId,
       );
-
-      // если покемонов меньше 6, добавляю новых, копируя первого покемона
-      if (this.pokemons.length < 6) {
-        const additionalPokemonsCount = 6 - this.pokemons.length;
-        const newPokemons = Array(additionalPokemonsCount)
-          .fill(this.pokemons[0])
-          .map((pokemon, index) => ({
-            ...pokemon,
-            id: Date.now() + index + this.pokemons.length, // генерирую уникальный ID
-          }));
-
-        this.pokemons.push(...newPokemons); // добавляю новые покемоны
-      }
-
       // сохраняю обновленный список покемонов в localStorage
       this.savePokemons();
     },

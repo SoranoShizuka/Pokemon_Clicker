@@ -1,13 +1,9 @@
 <template>
   <div class="pokemon-container">
     <div class="images">
-      <img
-        src="C:\Users\vklus\Рабочий стол\Pokemon_Clicker\pokemon-clicker\src\img\pokemon.png"
-      />
+      <img src="/pokemon.png" />
       <div class="border"></div>
-      <img
-        src="C:\Users\vklus\Рабочий стол\Pokemon_Clicker\pokemon-clicker\src\img\clicker.png"
-      />
+      <img src="/clicker.png" />
     </div>
     <div class="auth-container">
       <div class="tabs-border-bottom">
@@ -49,7 +45,7 @@
 import { defineComponent, ref, computed } from "vue";
 import SignUp from "../pages/SignUp.vue";
 import SignIn from "../pages/SignIn.vue";
-import Tabs from "@/components/shared/Tabs.vue";
+import Tabs from "@/components/shared/IndicatorTabs.vue";
 import { useRouter, useRoute } from "vue-router";
 export default defineComponent({
   components: { Tabs, SignUp, SignIn },

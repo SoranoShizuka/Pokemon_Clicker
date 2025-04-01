@@ -36,6 +36,7 @@
 import { defineComponent, onMounted, ref } from "vue";
 
 export default defineComponent({
+  name: "PokemonStats",
   props: {
     pokemon: {
       type: Object,

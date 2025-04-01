@@ -10,6 +10,10 @@
         @dragover.prevent
         @drop="onDrop($event, index)"
       >
+        <!--span тут нужен, чтобы ягода могла рястягиваться
+          на несколько ячеек, если не будет span, то
+          каждый предмет будет занимать одну ячейку -
+          нужно растянуть предмет-->
         <div
           class="inventory_item"
           v-if="cell.item && isTopLeftCell(index, cell.item)"
@@ -25,91 +29,137 @@
         </div>
       </div>
     </div>
-    <div class="coins-display">
-      <img
-        class="coins-icon"
-        src="C:\Users\vklus\Рабочий стол\Pokemon_Clicker\pokemon-clicker\src\img\icon-pokemon.png"
-      />
+    <button class="inventory-expand" @click="increaseInventory">
+      <img class="coins-icon" src="/icon-pokemon.png" />
       {{ inventoryStore.coins }}
-    </div>
+    </button>
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, watch } from "vue";
-import { useInventoryStore } from "@/stores/inventory.ts";
-interface InventoryItem {
-  id: string;
-  width: number;
-  height: number;
-  image: string;
-  x: number;
-  y: number;
-  type: string;
-}
-
-interface GridCell {
-  occupied: boolean;
-  item: InventoryItem | null;
-}
+import { defineComponent, ref, watchEffect, computed } from "vue";
+import { useInventoryStore } from "@/stores/inventoryStore.ts";
+import type { Item } from "@/stores/typesStore.ts";
 
 export default defineComponent({
+  name: "InventoryPokemonGame",
   setup() {
     const inventoryStore = useInventoryStore();
+    /* мне нужно, чтобы ряды автоматически обновлялись, т.к.
+    они увеличиваются, если я их оставлю в ref, то ряды не обновятся,
+    потому что ref не следит за изменениями в pinia автоматически,
+    поэтому здесь computed
+     */
+    const rows = computed(() => inventoryStore.rows);
+    const cols = computed(() => inventoryStore.cols);
+    /*
+    с ref значение у рядов устанавливается при заргрузке
+    компонента и больше не изменится, даже если будет
+    увеличение рядов
+     */
 
-    // создаю ячейки
-    const grid = ref(
-      Array(25)
+    // генерация сетки инвентаря
+    const generateGrid = () => {
+      return Array(rows.value * cols.value)
         .fill(null)
         .map(() => ({
           occupied: false,
-          item: null,
-        })),
-    );
+          item: null as Item | null,
+        }));
+    };
 
+    // создаю ячейки
+    const grid = ref(generateGrid());
+
+    // расширение инвентаря и списание денег за расширение
+    const increaseInventory = () => {
+      inventoryStore.expandInventory();
+    };
     // слежу за обновлениями инвентаря и перерисовываю сетку
-    watch(
-      () => inventoryStore.inventory,
-      () => {
-        console.log("Inventory updated, refreshing grid...");
-        grid.value = grid.value.map(() => ({ occupied: false, item: null }));
-
-        inventoryStore.inventory.forEach((item) => {
-          for (let i = 0; i < item.height; i++) {
-            for (let j = 0; j < item.width; j++) {
-              const subIndex = (item.y + i) * 5 + (item.x + j);
-              grid.value[subIndex].occupied = true;
-              if (i === 0 && j === 0) {
-                grid.value[subIndex].item = item;
-              }
+    /*
+    watchEffect - автоматически отслеживает все реактивные переменные
+    внутри функции - если инвентарь изменится, то код перезапуститься и
+    обновит grid.value
+     */
+    watchEffect(() => {
+      /*
+      grid.value - реактивная переменная, которая содежит
+      массив ячеек инвентаря
+      generateGrid - создает пустую сетку grid -
+      создает массив клеток где
+      occupied: false - клетки свободны,
+      item: null - в клетке нет предмета
+       */
+      grid.value = generateGrid();
+      // перебираю все предметы в инвентаре
+      inventoryStore.inventory.forEach((item) => {
+        for (let row = 0; row < item.height; row++) {
+          for (let col = 0; col < item.width; col++) {
+            const index = (item.y + row) * cols.value + (item.x + col);
+            // отмечаю занятые клетки
+            grid.value[index].occupied = true;
+            /* привязываю предмет к верхнему левому углу,
+            то есть вся информация о предмете хранится
+            в одной клетке, остальные помечаются как занятые
+            occupied = true, item = null
+             */
+            if (row === 0 && col === 0) {
+              grid.value[index].item = item;
             }
           }
-        });
-      },
-      { deep: true },
-    );
+        }
+      });
+    });
     // проверяю является ли ячейка частью предмета при перетаскивании
-    const isTopLeftCell = (cellIndex: number, item: InventoryItem) => {
+    const isTopLeftCell = (cellIndex: number, item: Item) => {
       return cellIndex === item.y * 5 + item.x;
     };
 
-    // перетаскивание предмета
+    /* перетаскивание предмета -
+    при начале перетаскивания предмета
+     сохраняю itemId в dataTransfer
+     использую формат text/plain,
+     потому что это самы подходящий формат
+     позже в drop смогу получить itemId и понять,
+     какой предмет перетащила
+     */
+
     const onDragStart = (event: DragEvent, itemId: string) => {
+      /*
+      event.dataTransfer - это объект,который позволяет передавать
+      данные между элементами при перетаскивании
+      .setData(format, data) - сохраняет данные в определенном формате
+      text/plain - тип данных, в этом случае просто тектс, id предмета,
+      универсальный формат, который поддреживают все браузеры
+       */
       event.dataTransfer?.setData("text/plain", itemId);
     };
 
     // проверяю могу ли разместить предмет в новой позиции
+    /*
+    x, y — верхний левый угол предмета.
+    width, height — размер предмета в клетках.
+     */
     const canPlaceItem = (
       x: number,
       y: number,
       width: number,
       height: number,
     ) => {
-      if (x + width > 5 || y + height > 5) return false;
-
-      for (let i = 0; i < height; i++) {
-        for (let j = 0; j < width; j++) {
-          const index = (y + i) * 5 + (x + j);
-          if (grid.value[index].occupied) return false;
+      // проверяю - выходит ли предмет за границы сетки
+      const isOutOfBounds = x + width > cols.value || y + height > rows.value;
+      if (isOutOfBounds) {
+        // если выходит за границы, то размещение невозможно
+        return false;
+      }
+      // проверяю заняты ли ячейки в новой позиции
+      for (let rowOffset = 0; rowOffset < height; rowOffset++) {
+        for (let colOffset = 0; colOffset < width; colOffset++) {
+          // вычисляю индекс ячейки в сетке
+          const cellIndex = (y + rowOffset) * cols.value + (x + colOffset);
+          // если ячейка занята, то предмет нельзя разместить
+          if (grid.value[cellIndex].occupied) {
+            return false;
+          }
         }
       }
       return true;
@@ -117,20 +167,39 @@ export default defineComponent({
 
     // перемещение предмета
     const onDrop = (event: DragEvent, targetIndex: number) => {
+      // получаю id перетаскиваемого предмета
       const itemId = event.dataTransfer?.getData("text/plain");
+      // если не получаю id, то выхожу из функции
       if (!itemId) return;
 
-      const targetX = targetIndex % 5;
-      const targetY = Math.floor(targetIndex / 5);
+      // определяю кол-во колонок в инвентаре
+      /* вычисляю координаты по индексу ячейки -
+      делю индекс ячейки на кол-во столбцов -
+      % - дает остаток от деления, который будет
+      горизонтальной позицией ячейки в столбце
+      позволяет вычислить в какой столбце находится
+      ячейка с данным индексом */
+      const targetX = targetIndex % cols.value;
+      // определяю строку ряд в инветаре
+      const targetY = Math.floor(targetIndex / cols.value);
 
+      // ищу предмет в инвентаре по id
       const item = inventoryStore.inventory.find((i) => i.id === itemId);
+      // если предмет не нашелся, то выхожу из функции
       if (!item) return;
 
-      if (canPlaceItem(targetX, targetY, item.width, item.height)) {
-        // Перемещаем в новую
+      // проверяю могу ли переместить предмет в новую позицию
+      const canMoveItem = canPlaceItem(
+        targetX,
+        targetY,
+        item.width,
+        item.height,
+      );
+      if (canMoveItem) {
+        // перемещаю в новую позицию
         inventoryStore.moveItem(itemId, targetX, targetY);
       } else {
-        alert("Невозможно переместить предмет в это место. Не хватает места.");
+        alert("невозможно переместить предмет в это место. Не хватает места.");
       }
     };
 
@@ -141,6 +210,7 @@ export default defineComponent({
       onDragStart,
       onDrop,
       isTopLeftCell,
+      increaseInventory,
     };
   },
 });
@@ -176,7 +246,7 @@ export default defineComponent({
   gap: 12px;
   --cell-size: min(50px); /* Динамический размер */
   grid-template-columns: repeat(5, var(--cell-size));
-  grid-template-rows: repeat(5, var(--cell-size));
+  grid-template-rows: repeat(3, var(--cell-size));
   position: relative;
 }
 .inventory_cell {
@@ -219,7 +289,9 @@ export default defineComponent({
   height: 100%;
   object-fit: contain;
 }
-.coins-display {
+.inventory-expand {
+  cursor: pointer;
+  background: #ffffff;
   margin: 10px 16px;
   display: flex;
   padding: 5px 100px;

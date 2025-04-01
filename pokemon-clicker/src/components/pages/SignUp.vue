@@ -49,12 +49,7 @@ import { defineComponent, ref } from "vue";
 import { useRouter } from "vue-router";
 import Button from "../shared/Button.vue";
 import Label from "../shared/Label.vue";
-interface Pokemon {
-  name: string;
-  image: string;
-  weight: number;
-  moneyPerSec: number;
-}
+import type { Pokemon } from "@/stores/typesStore.ts";
 export default defineComponent({
   components: { Button, Label },
   setup() {

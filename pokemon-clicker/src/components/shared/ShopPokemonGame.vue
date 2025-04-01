@@ -34,17 +34,9 @@
 </template>
 <script lang="ts">
 import { defineComponent, ref, computed, onMounted } from "vue";
-import { useInventoryStore } from "@/stores/inventory.ts";
-interface ShopItem {
-  id: string;
-  title: string;
-  description: string;
-  price: number;
-  image: string;
-  type: string;
-  width: number;
-  height: number;
-}
+import { useInventoryStore } from "@/stores/inventoryStore.ts";
+import type { ShopItem } from "@/stores/typesStore.ts";
+
 export default defineComponent({
   name: "Shop",
   setup() {
